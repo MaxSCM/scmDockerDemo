@@ -148,32 +148,32 @@ def getCurrentSnapshot() {
 
 def keepThisBuild() {
     currentBuild.setKeepLog(true)
-    currentBuild.setDescription("Test Description")
+    currentBuild.setDescription("Ship it! It is a hit")
 }
 
 def getShortCommitHash() {
-    return sh(returnStdout: true, script: "svn log -n 1 --pretty=format:'%h'").trim()
+    return sh(returnStdout: true, script: "echo get commit log").trim()
 }
 
 def getChangeAuthorName() {
-    return sh(returnStdout: true, script: "svn info").trim()
+    return sh(returnStdout: true, script: "echo get auth").trim()
 }
 
 def getChangeAuthorEmail() {
-    return sh(returnStdout: true, script: "svn info").trim()
+    return sh(returnStdout: true, script: "echo auth email").trim()
 }
 
 def getChangeSet() {
-    return sh(returnStdout: true, script: 'svn diff').trim()
+    return sh(returnStdout: true, script: 'echo changes').trim()
 }
 
 def getChangeLog() {
-    return sh(returnStdout: true, script: "svn log --date=short --pretty=format:'%ad %aN <%ae> %n%n%x09* %s%d%n%b'").trim()
+    return sh(returnStdout: true, script: "echo change log").trim()
 }
 
 def getCurrentBranch () {
     return sh (
-            script: 'svn info',
+            script: 'echo dev_1.0.0',
             returnStdout: true
     ).trim()
 }
