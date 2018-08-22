@@ -12,15 +12,16 @@ pipeline {
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
         SVNURL = 'http://svn.maximus.com/svn/'
         JAVA_OPTS='-Xmx1024m -Xms512m'
+		installationName='http://cocd1mmweb01scm.maxcorp.maximus:9000'
     }
     options {
         buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '10', numToKeepStr: '20'))
         timestamps()
-        //retry(3)
+        retry(1)
         timeout time:10, unit:'MINUTES'
     }
 	parameters {
-        string(defaultValue: "develop", description: 'Branch Specifier', name: 'SPECIFIER')
+        string(defaultValue: "dev_1.0.0", description: 'Branch Specifier', name: 'SPECIFIER')
         booleanParam(defaultValue: false, description: 'Deploy to QA Environment ?', name: 'DEPLOY_QA')
         booleanParam(defaultValue: false, description: 'Deploy to UAT Environment ?', name: 'DEPLOY_UAT')
         booleanParam(defaultValue: false, description: 'Deploy to PROD Environment ?', name: 'DEPLOY_PROD')
@@ -53,7 +54,7 @@ pipeline {
             parallel {
               stage('Execute Dependency Analysis') {
                   steps {
-                      dependencyCheckAnalyzer scanpath: libs, includeCsvReports: false, includeHtmlReports: false, includeJsonReports: false, includeVulnReports: false, isAutoupdateDisabled: false, skipOnScmChange: false, skipOnUpstreamChange: false
+                      dependencyCheckAnalyzer outdir: build/reports, datadir: depdata, suppressionFile: false, hintsFile: false, zipExtensions: false, scanpath: libs, includeCsvReports: false, includeHtmlReports: false, includeJsonReports: false, includeVulnReports: false, isAutoupdateDisabled: false, skipOnScmChange: false, skipOnUpstreamChange: false
                   }
               }
               stage('SonarQube analysis') {
