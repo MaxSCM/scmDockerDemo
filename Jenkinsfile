@@ -53,7 +53,7 @@ pipeline {
             parallel {
               stage('Execute Dependency Analysis') {
                   steps {
-                      dependencyCheckAnalyzer includeCsvReports: false, includeHtmlReports: false, includeJsonReports: false, includeVulnReports: false, isAutoupdateDisabled: false, skipOnScmChange: false, skipOnUpstreamChange: false
+                      dependencyCheckAnalyzer scanpath: libs includeCsvReports: false, includeHtmlReports: false, includeJsonReports: false, includeVulnReports: false, isAutoupdateDisabled: false, skipOnScmChange: false, skipOnUpstreamChange: false
                   }
               }
               stage('SonarQube analysis') {
