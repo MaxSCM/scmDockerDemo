@@ -46,7 +46,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-				gradle
+				sh 'gradle'
             }
         }
         stage('Static Code Coverage Analysis') {
