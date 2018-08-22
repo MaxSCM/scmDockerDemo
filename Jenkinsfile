@@ -68,8 +68,7 @@ pipeline {
         stage('Docker Build, Version & Publish') {
 			steps {
 				node('Docker') {
-					 cd /Jenkins/scmScript
-                     java -Xmx512m -Xms256m -jar scmScript.jar command CreateRelease -p ${REPONAME} -l dev_${LOD}
+					 sh 'cd /Jenkins/scmScript;java -Xmx512m -Xms256m -jar scmScript.jar command CreateRelease -p ${REPONAME} -l dev_${LOD}'
                 }
 			 } 
 		 }
