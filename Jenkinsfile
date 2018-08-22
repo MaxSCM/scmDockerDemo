@@ -46,40 +46,33 @@ pipeline {
         }
         stage('Build') {
             steps {
-				build job: 'SCM/SCM_dockerDemo-scmScript/', parameters: [string(name: 'SNAPSHOT', value: '')]
+				gradle
             }
         }
         stage('Static Code Coverage Analysis') {
             parallel {
-              stage('Execute Whitesource Analysis') {
+              stage('Execute Dependency Analysis') {
                   steps {
-                      whitesource jobApiToken: '', jobCheckPolicies: 'global', jobForceUpdate: 'global', libExcludes: '', libIncludes: '', product: "$WS_PRODUCT_TOKEN", productVersion: '', projectToken: "$WS_PROJECT_TOKEN", requesterEmail: ''
+                      dependencyCheckAnalyzer includeCsvReports: false, includeHtmlReports: false, includeJsonReports: false, includeVulnReports: false, isAutoupdateDisabled: false, skipOnScmChange: false, skipOnUpstreamChange: false
                   }
               }
               stage('SonarQube analysis') {
                   steps {
-                      build 'SCM/scmDockerDemo_sonarqube'
+					  withSonarQubeEnv {
+						gradle sonarqube
+					  }
                   }
               }
             }
         }
-         stage('Docker Tag & Push') {
-             steps {
-                 script {
-                     branchName = getCurrentBranch()
-                     shortCommitHash = getShortCommitHash()
-                     IMAGE_VERSION = "${BUILD_NUMBER}-" + branchName + "-" + shortCommitHash
-                     sh 'eval $(aws ecr get-login --no-include-email --region us-east-1)'
-                     sh "docker-compose build"
-                     sh "docker tag ${REPOURL}/${APP_NAME}:latest ${REPOURL}/${APP_NAME}:${IMAGE_VERSION}"
-                     sh "docker push ${REPOURL}/${APP_NAME}:${IMAGE_VERSION}"
-                     sh "docker push ${REPOURL}/${APP_NAME}:latest"
-
-                     sh "docker rmi ${REPOURL}/${APP_NAME}:${IMAGE_VERSION} ${REPOURL}/${APP_NAME}:latest"
-                 }
-             }
-         }
-
+        stage('Docker Build, Version & Publish') {
+			steps {
+				node('Docker') {
+					 cd /Jenkins/scmScript
+                     java -Xmx512m -Xms256m -jar scmScript.jar command CreateRelease -p ${REPONAME} -l dev_${LOD}
+                }
+			 } 
+		 }
         stage('Deploy - CI') {
             steps {
                 echo "Deploying to CI Environment."
