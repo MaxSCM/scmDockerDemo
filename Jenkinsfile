@@ -152,28 +152,28 @@ def keepThisBuild() {
 }
 
 def getShortCommitHash() {
-    return sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()
+    return sh(returnStdout: true, script: "svn log -n 1 --pretty=format:'%h'").trim()
 }
 
 def getChangeAuthorName() {
-    return sh(returnStdout: true, script: "git show -s --pretty=%an").trim()
+    return sh(returnStdout: true, script: "svn info").trim()
 }
 
 def getChangeAuthorEmail() {
-    return sh(returnStdout: true, script: "git show -s --pretty=%ae").trim()
+    return sh(returnStdout: true, script: "svn info").trim()
 }
 
 def getChangeSet() {
-    return sh(returnStdout: true, script: 'git diff-tree --no-commit-id --name-status -r HEAD').trim()
+    return sh(returnStdout: true, script: 'svn diff').trim()
 }
 
 def getChangeLog() {
-    return sh(returnStdout: true, script: "git log --date=short --pretty=format:'%ad %aN <%ae> %n%n%x09* %s%d%n%b'").trim()
+    return sh(returnStdout: true, script: "svn log --date=short --pretty=format:'%ad %aN <%ae> %n%n%x09* %s%d%n%b'").trim()
 }
 
 def getCurrentBranch () {
     return sh (
-            script: 'git rev-parse --abbrev-ref HEAD',
+            script: 'svn info',
             returnStdout: true
     ).trim()
 }
